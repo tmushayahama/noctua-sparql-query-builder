@@ -1,0 +1,32 @@
+{
+  "name": "noctua-sparql-query-builder",
+  "version": "0.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest --config jestconfig.js",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/jest": "^24.0.12",
+    "@types/lodash": "^4.14.124",
+    "jest": "^24.8.0",
+    "prettier": "^1.17.0",
+    "sparql-query-builder": "file:../sparql-query-builder/sparql-query-builder-0.0.2.tgz",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "3.2.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11"
+  }
+}
