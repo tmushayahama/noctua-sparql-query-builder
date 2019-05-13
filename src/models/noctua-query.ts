@@ -29,7 +29,13 @@ export class NoctuaQuery extends Query {
         return this;
     }
 
-    curator(orcid: string) {
+    pmid(pmid: string) {
+        this._graph.addComponent(triple('?entity', 'dc:source', '?source'));
+        this._graph.addComponent('BIND(REPLACE(?source, " ", "") AS ?source)');
+        this._graph.addComponent(`FILTER((CONTAINS(?source, "${pmid}")))`);
+    }
+
+    contributor(orcid: string) {
         this._where.addComponent(`BIND(${orcid} as ?orcid)`);
         this._where.addComponent('BIND(IRI(?orcid) as ?orcidIRI)');
         this._where.addComponent(optional(
