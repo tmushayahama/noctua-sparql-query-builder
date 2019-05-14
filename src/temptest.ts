@@ -14,7 +14,8 @@ import { NoctuaQuery } from "./models/noctua-query";
 let buildAllQuery = () => {
     let query = new NoctuaQuery();
 
-    query.contributor('"http://orcid.org/0000-0002-2874-6934"^^xsd:string')
+    query.goterm('GO:0017127')
+        .contributor('"http://orcid.org/0000-0002-2874-6934"^^xsd:string')
 
     return query.build();
 }

@@ -29,10 +29,21 @@ export class NoctuaQuery extends Query {
         return this;
     }
 
+    gp(gpIri: string) {
+        this._graph.addComponent(triple('?s', 'enabled_by:', '?entity'));
+        this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
+        this._graph.addComponent(`FILTER(?term = <${gpIri}>)`);
+
+        return this;
+    }
+
     pmid(pmid: string) {
-        this._graph.addComponent(triple('?entity', 'dc:source', '?source'));
+        this._graph.addComponent(triple('?sourceEntity ', 'rdf:type', 'owl:NamedIndividual'));
+        this._graph.addComponent(triple('?sourceEntity', 'dc:source', '?source'));
         this._graph.addComponent('BIND(REPLACE(?source, " ", "") AS ?source)');
         this._graph.addComponent(`FILTER((CONTAINS(?source, "${pmid}")))`);
+
+        return this;
     }
 
     contributor(orcid: string) {
@@ -42,6 +53,7 @@ export class NoctuaQuery extends Query {
             triple('?orcidIRI', 'rdfs:label', '?name')
         ));
         this._where.addComponent('BIND(IF(bound(?name), ?name, ?orcid) as ?name)');
+
         return this;
     }
 
@@ -66,24 +78,19 @@ export class NoctuaQuery extends Query {
     private _addTemplate() {
         this._graph.addComponent('?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; dc:contributor ?orcid');
         this._graph.addComponent(optional('?model providedBy: ?providedBy'));
-        this._graph.addComponent(triple('?entity ', 'rdf:type', 'owl:NamedIndividual'));
         this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
 
-
         this._where.addComponent(this._graph);
-        this._where.addComponent('VALUES ?aspect { BP: MF: CC: }');
-        this._where.addComponent(triple('?entity', 'rdf:type', '?aspect'));
-        this._where.addComponent(triple('?term', 'rdfs:label', '?termLabel'));
 
         this.select(
-            'distinct ?model ?modelTitle ?aspect ?term ?termLabel ?date',
+            'distinct ?model ?modelTitle ?date',
             '(GROUP_CONCAT(distinct ?entity;separator="@@") as ?entities)',
             '(GROUP_CONCAT(distinct ?orcid;separator="@@") as ?contributors)',
             '(GROUP_CONCAT(distinct ?providedBy;separator="@@") as ?groups)'
         )
 
         this.addClause(this._where
-        ).groupBy('?model ?modelTitle ?aspect ?term ?termLabel ?date'
+        ).groupBy('?model ?modelTitle ?date'
         ).orderBy('?date', 'DESC');
     }
 }
