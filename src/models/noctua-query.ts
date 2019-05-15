@@ -30,8 +30,13 @@ export class NoctuaQuery extends Query {
     }
 
     gp(gpIri: string) {
+        let entityTermTriple = triple('?entity', 'rdf:type', '?term');
         this._graph.addComponent(triple('?s', 'enabled_by:', '?entity'));
-        this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
+
+        if (!this._graph.findComponent(entityTermTriple)) {
+            this._graph.addComponent(entityTermTriple);
+        }
+
         this._graph.addComponent(`FILTER(?term = <${gpIri}>)`);
 
         return this;
