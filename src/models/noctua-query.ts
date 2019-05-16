@@ -25,19 +25,13 @@ export class NoctuaQuery extends Query {
     }
 
     goterm(goTermId: string) {
-        this._graph.addComponent(`FILTER(?term = ${goTermId})`);
+        this._graph.addComponent(triple('?entity', 'rdf:type', goTermId));
         return this;
     }
 
     gp(gpIri: string) {
-        let entityTermTriple = triple('?entity', 'rdf:type', '?term');
-        this._graph.addComponent(triple('?s', 'enabled_by:', '?entity'));
-
-        if (!this._graph.findComponent(entityTermTriple)) {
-            this._graph.addComponent(entityTermTriple);
-        }
-
-        this._graph.addComponent(`FILTER(?term = <${gpIri}>)`);
+        this._graph.addComponent(triple('?s', 'enabled_by:', '?gpEntity'));
+        this._graph.addComponent(triple('?gpEntity', 'rdf:type', gpIri));
 
         return this;
     }
@@ -77,6 +71,7 @@ export class NoctuaQuery extends Query {
             prefix('vcard', '<http://www.w3.org/2006/vcard/ns#>'),
             prefix('has_affiliation', '<http://purl.obolibrary.org/obo/ERO_0000066>'),
             prefix('enabled_by', '<http://purl.obolibrary.org/obo/RO_0002333>'),
+            prefix('evidence', '<http://geneontology.org/lego/evidence>'),
             prefix('obo', '<http://www.geneontology.org/formats/oboInOwl#>'));
     }
 
