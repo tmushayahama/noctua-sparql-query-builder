@@ -31,7 +31,7 @@ export class NoctuaQuery extends Query {
 
     gp(gpIri: string) {
         this._graph.addComponent(triple('?s', 'enabled_by:', '?gpEntity'));
-        this._graph.addComponent(triple('?gpEntity', 'rdf:type', gpIri));
+        this._graph.addComponent(triple('?gpEntity', 'rdf:type', `<${gpIri}>`));
 
         return this;
     }
@@ -67,7 +67,7 @@ export class NoctuaQuery extends Query {
         return this;
     }
 
-    taxon(taxonUrl: string) {
+    taxon(taxonIrl: string) {
         this._graph.addComponent(triple('?s', 'enabled_by:', '?entity'));
         this._graph.addComponent(triple('?entity', 'rdf:type', '?identifier'));
         this._graph.addComponent('FILTER(?identifier != owl:NamedIndividual)');
@@ -75,7 +75,7 @@ export class NoctuaQuery extends Query {
         this._where.addComponent(triple('?identifier', 'rdfs:subClassOf', '?v0'));
         this._where.addComponent(triple('?identifier', 'rdfs:label', ' ?name'));
         this._where.addComponent(triple('?v0', 'owl:onProperty', ' in_taxon:'));
-        this._where.addComponent(triple('?v0', 'owl:someValuesFrom', taxonUrl));
+        this._where.addComponent(triple('?v0', 'owl:someValuesFrom', `<${taxonIrl}>`));
 
         return this;
     }
