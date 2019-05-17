@@ -56,6 +56,30 @@ export class NoctuaQuery extends Query {
         return this;
     }
 
+    group(groupName: string) {
+        this._where.addComponent(`BIND("${groupName}" as ?groupName)`);
+        this._where.addComponent(optional(
+            triple('?providedByIRI', 'rdfs:label', '?providedByLabel')
+        ));
+        this._where.addComponent('FILTER(?providedByLabel = ?groupName )');
+        this._where.addComponent('BIND(IF(bound(?name), ?name, ?orcid) as ?name)');
+
+        return this;
+    }
+
+    taxon(taxonUrl: string) {
+        this._graph.addComponent(triple('?s', 'enabled_by:', '?entity'));
+        this._graph.addComponent(triple('?entity', 'rdf:type', '?identifier'));
+        this._graph.addComponent('FILTER(?identifier != owl:NamedIndividual)');
+
+        this._where.addComponent(triple('?identifier', 'rdfs:subClassOf', '?v0'));
+        this._where.addComponent(triple('?identifier', 'rdfs:label', ' ?name'));
+        this._where.addComponent(triple('?v0', 'owl:onProperty', ' in_taxon:'));
+        this._where.addComponent(triple('?v0', 'owl:someValuesFrom', taxonUrl));
+
+        return this;
+    }
+
     private _addPrefix() {
         this.prefix(
             prefix('rdf', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>'),
@@ -72,6 +96,7 @@ export class NoctuaQuery extends Query {
             prefix('has_affiliation', '<http://purl.obolibrary.org/obo/ERO_0000066>'),
             prefix('enabled_by', '<http://purl.obolibrary.org/obo/RO_0002333>'),
             prefix('evidence', '<http://geneontology.org/lego/evidence>'),
+            prefix('in_taxon', '<http://purl.obolibrary.org/obo/RO_0002162>'),
             prefix('obo', '<http://www.geneontology.org/formats/oboInOwl#>'));
     }
 
