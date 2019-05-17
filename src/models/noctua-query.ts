@@ -37,10 +37,10 @@ export class NoctuaQuery extends Query {
     }
 
     pmid(pmid: string) {
-        this._graph.addComponent(triple('?sourceEntity ', 'rdf:type', 'owl:NamedIndividual'));
-        this._graph.addComponent(triple('?sourceEntity', 'dc:source', '?source'));
+        this._graph.addComponent(triple('?axiom', 'evidence:', '?evidence'));
+        this._graph.addComponent(triple('?evidence', 'dc:source', '?source'));
         this._graph.addComponent('BIND(REPLACE(?source, " ", "") AS ?source)');
-        this._graph.addComponent(`FILTER((CONTAINS(?source, "${pmid}")))`);
+        this._graph.addComponent(`FILTER(?source="${pmid}")`);
 
         return this;
     }
