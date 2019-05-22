@@ -46,12 +46,7 @@ export class NoctuaQuery extends Query {
     }
 
     contributor(orcid: string) {
-        this._where.addComponent(`BIND(${orcid} as ?orcid)`);
-        this._where.addComponent('BIND(IRI(?orcid) as ?orcidIRI)');
-        this._where.addComponent(optional(
-            triple('?orcidIRI', 'rdfs:label', '?name')
-        ));
-        this._where.addComponent('BIND(IF(bound(?name), ?name, ?orcid) as ?name)');
+        this._graph.addComponent(triple('?model', 'dc:contributor', orcid));
 
         return this;
     }
