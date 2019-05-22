@@ -29,9 +29,9 @@ export class NoctuaQuery extends Query {
         return this;
     }
 
-    gp(gpIri: string) {
+    gp(gpIRI: string) {
         this._graph.addComponent(triple('?s', 'enabled_by:', '?gpEntity'));
-        this._graph.addComponent(triple('?gpEntity', 'rdf:type', `<${gpIri}>`));
+        this._graph.addComponent(triple('?gpEntity', 'rdf:type', `<${gpIRI}>`));
 
         return this;
     }
@@ -56,18 +56,12 @@ export class NoctuaQuery extends Query {
         return this;
     }
 
-    group(groupName: string) {
-        this._where.addComponent(`BIND("${groupName}" as ?groupName)`);
-        this._where.addComponent(optional(
-            triple('?providedByIRI', 'rdfs:label', '?providedByLabel')
-        ));
-        this._where.addComponent('FILTER(?providedByLabel = ?groupName )');
-        this._where.addComponent('BIND(IF(bound(?name), ?name, ?orcid) as ?name)');
-
+    group(groupIRI: string) {
+        this._graph.addComponent(triple('?model', 'providedBy:', groupIRI));
         return this;
     }
 
-    taxon(taxonIrl: string) {
+    taxon(taxonIRI: string) {
         this._graph.addComponent(triple('?s', 'enabled_by:', '?entity'));
         this._graph.addComponent(triple('?entity', 'rdf:type', '?identifier'));
         this._graph.addComponent('FILTER(?identifier != owl:NamedIndividual)');
@@ -75,7 +69,7 @@ export class NoctuaQuery extends Query {
         this._where.addComponent(triple('?identifier', 'rdfs:subClassOf', '?v0'));
         this._where.addComponent(triple('?identifier', 'rdfs:label', ' ?name'));
         this._where.addComponent(triple('?v0', 'owl:onProperty', ' in_taxon:'));
-        this._where.addComponent(triple('?v0', 'owl:someValuesFrom', `<${taxonIrl}>`));
+        this._where.addComponent(triple('?v0', 'owl:someValuesFrom', `<${taxonIRI}>`));
 
         return this;
     }
@@ -101,7 +95,7 @@ export class NoctuaQuery extends Query {
     }
 
     private _addTemplate() {
-        this._graph.addComponent('?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; dc:contributor ?orcid');
+        this._graph.addComponent('?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; providedBy: ?providedBy; dc:contributor ?orcid');
         this._graph.addComponent(optional('?model providedBy: ?providedBy'));
         this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
 
