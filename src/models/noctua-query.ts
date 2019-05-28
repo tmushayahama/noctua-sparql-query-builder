@@ -80,6 +80,7 @@ export class NoctuaQuery extends Query {
             prefix('BP', '<http://purl.obolibrary.org/obo/GO_0008150>'),
             prefix('MF', '<http://purl.obolibrary.org/obo/GO_0003674>'),
             prefix('CC', '<http://purl.obolibrary.org/obo/GO_0005575>'),
+            prefix('modelState', '<http://geneontology.org/lego/modelstate>'),
             prefix('providedBy', '<http://purl.org/pav/providedBy>'),
             prefix('vcard', '<http://www.w3.org/2006/vcard/ns#>'),
             prefix('has_affiliation', '<http://purl.obolibrary.org/obo/ERO_0000066>'),
@@ -90,21 +91,21 @@ export class NoctuaQuery extends Query {
     }
 
     private _addTemplate() {
-        this._graph.addComponent('?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; providedBy: ?providedBy; dc:contributor ?orcid');
+        this._graph.addComponent('?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; modelState: ?modelState; providedBy: ?providedBy; dc:contributor ?orcid');
         this._graph.addComponent(optional('?model providedBy: ?providedBy'));
         this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
 
         this._where.addComponent(this._graph);
 
         this.select(
-            'distinct ?model ?modelTitle ?date',
+            'distinct ?model ?modelTitle ?modelState ?date',
             '(GROUP_CONCAT(distinct ?entity;separator="@@") as ?entities)',
             '(GROUP_CONCAT(distinct ?orcid;separator="@@") as ?contributors)',
             '(GROUP_CONCAT(distinct ?providedBy;separator="@@") as ?groups)'
         )
 
         this.addClause(this._where
-        ).groupBy('?model ?modelTitle ?date'
+        ).groupBy('?model ?modelTitle ?modelState ?date'
         ).orderBy('?date', 'DESC');
     }
 }
