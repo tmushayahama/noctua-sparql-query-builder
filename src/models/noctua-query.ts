@@ -53,6 +53,13 @@ export class NoctuaQuery extends Query {
 
     group(groupIRI: string) {
         this._graph.addComponent(triple('?model', 'providedBy:', groupIRI));
+
+        return this;
+    }
+
+    state(state: string) {
+        this._graph.addComponent(triple('?model', 'modelState:', state));
+
         return this;
     }
 
