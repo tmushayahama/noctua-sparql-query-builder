@@ -38,6 +38,7 @@ export class NoctuaQuery extends Query {
 
     pmid(pmid: string) {
         this._graph.addComponent(triple('?axiom', 'evidence:', '?evidence'));
+        this._graph.addComponent(triple('?axiom', 'owl:annotatedSource', '?entity'))
         this._graph.addComponent(triple('?evidence', 'dc:source', '?source'));
         this._graph.addComponent('BIND(REPLACE(?source, " ", "") AS ?source)');
         this._graph.addComponent(`FILTER(?source="${pmid}")`);
@@ -100,7 +101,7 @@ export class NoctuaQuery extends Query {
     private _addTemplate() {
         this._graph.addComponent('?model metago:graphType metago:noctuaCam; dc:date ?date; dc:title ?modelTitle; modelState: ?modelState; providedBy: ?providedBy; dc:contributor ?orcid');
         this._graph.addComponent(optional('?model providedBy: ?providedBy'));
-        this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
+        //this._graph.addComponent(triple('?entity', 'rdf:type', '?term'));
 
         this._where.addComponent(this._graph);
 
